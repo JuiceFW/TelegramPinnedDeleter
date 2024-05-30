@@ -1,4 +1,5 @@
 .env
 __pycache__
 *.log
-pin.png
+*.png
+*.service
