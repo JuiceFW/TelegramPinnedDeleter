@@ -3,3 +3,4 @@ __pycache__
 *.log
 *.png
 *.service
+main_secret.py
