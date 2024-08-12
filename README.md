@@ -48,6 +48,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 This project uses the [pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI) library. Thank you to the developers of pyTelegramBotAPI for their contribution.
 
 For more information on how to use the pyTelegramBotAPI library, refer to the [official documentation](https://github.com/eternnoir/pyTelegramBotAPI).
-```
-
 Feel free to customize this README file to fit your project's specific details and requirements.
