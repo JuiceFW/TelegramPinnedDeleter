@@ -86,7 +86,7 @@ def logs_command(message: types.Message):
     send_logs(message.from_user.id)
 
 
-@bot.channel_post_handler(content_types=["pinned_message", "new_chat_title"])
+@bot.channel_post_handler(content_types=["pinned_message", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created", "supergroup_chat_created"])
 def delete_pinned_messagess(message: types.Message):
     try:
         bot.delete_message(message.chat.id, message.id, timeout=10)
