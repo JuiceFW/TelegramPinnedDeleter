@@ -1,6 +1,9 @@
+from pathlib import Path
 import traceback
+import datetime
 import logging
 import time
+import sys
 import os
 
 from dotenv import load_dotenv
@@ -10,20 +13,43 @@ import telebot
 load_dotenv()
 
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DIR = Path(sys.argv[0]).parent
+LOGS_DIR = BASE_DIR.joinpath("Logs")
 os.chdir(BASE_DIR)
 
 
+os.makedirs(LOGS_DIR, exist_ok=True)
+logs_file = LOGS_DIR.joinpath(datetime.datetime.now().strftime("%d_%m_%Y") + ".log")
+
+logs = os.listdir(LOGS_DIR)
+if len(logs) > 15:
+    for item in reversed(logs):
+        try:
+            os.remove(LOGS_DIR.joinpath(item))
+        except:
+            print(traceback.format_exc())
+            continue
+logs = []
+
 logger = logging.getLogger()
-logging_format = '%(asctime)s : %(name)s : %(levelname)s : %(message)s'
+logging_format = '%(asctime)s : %(name)s : %(levelname)s : %(message)s' # Можно убрать %(name)s
 logging.basicConfig(
     level=logging.INFO,
     format=logging_format
 )
-fh = logging.FileHandler(
-    "logs.log",
-    encoding='utf-8'
-)
+try:
+    fh = logging.FileHandler(
+        logs_file,
+        encoding='utf-8'
+    )
+except:
+    try:
+        fh = logging.FileHandler(
+            logs_file
+        )
+    except:
+        print(traceback.format_exc())
+        os._exit(0)
 fh.setFormatter(logging.Formatter(logging_format))
 logger.addHandler(fh)
 
@@ -40,18 +66,16 @@ except:
 
 
 def send_logs(id: int):
-    if not isinstance(id, int):
-        return
-    
-    if os.path.exists("logs.log"):
+    if os.path.exists(logs_file):
         try:
-            with open("logs.log", "rb") as file:
+            with open(logs_file, "rb") as file:
                 bot.send_document(id, file)
         except:
             logger.error(traceback.format_exc())
 
 if os.getenv("LOGS_CHAT_ID"):
-    send_logs(os.getenv("LOGS_CHAT_ID"))
+    logger.debug("sending logs to: " + str(os.getenv("LOGS_CHAT_ID")))
+    send_logs(int(os.getenv("LOGS_CHAT_ID")))
 
 
 @bot.message_handler(commands=['get_logs', 'logs', 'log'], chat_types=['private'])
@@ -62,7 +86,7 @@ def logs_command(message: types.Message):
     send_logs(message.from_user.id)
 
 
-@bot.channel_post_handler(content_types=["pinned_message"])
+@bot.channel_post_handler(content_types=["pinned_message", "new_chat_title"])
 def delete_pinned_messagess(message: types.Message):
     try:
         bot.delete_message(message.chat.id, message.id, timeout=10)
