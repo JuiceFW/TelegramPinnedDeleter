@@ -25,10 +25,13 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 logs_file = LOGS_DIR.joinpath(datetime.datetime.now().strftime("%d_%m_%Y") + ".log")
 
 logs = os.listdir(LOGS_DIR)
+logs = sorted(logs, key=lambda a: datetime.datetime.strptime(a.replace(".log", ""), "%d_%m_%Y"))
+
 if len(logs) > 15:
-    for item in reversed(logs):
+    for item in logs:
         try:
             os.remove(LOGS_DIR.joinpath(item))
+            break
         except:
             print(traceback.format_exc())
             continue
