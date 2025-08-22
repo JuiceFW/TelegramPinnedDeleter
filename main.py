@@ -18,6 +18,9 @@ LOGS_DIR = BASE_DIR.joinpath("Logs")
 os.chdir(BASE_DIR)
 
 
+ADMIN_ID = os.getenv("ADMIN_ID")
+
+
 os.makedirs(LOGS_DIR, exist_ok=True)
 logs_file = LOGS_DIR.joinpath(datetime.datetime.now().strftime("%d_%m_%Y") + ".log")
 
@@ -80,7 +83,7 @@ if os.getenv("LOGS_CHAT_ID"):
 
 @bot.message_handler(commands=['get_logs', 'logs', 'log'], chat_types=['private'])
 def logs_command(message: types.Message):
-    if message.from_user.id != os.getenv("ADMIN_ID"):
+    if message.from_user.id != ADMIN_ID:
         return
 
     send_logs(message.from_user.id)
@@ -108,7 +111,7 @@ def delete_pinned_messagess_chat(message: types.Message):
 
 @bot.message_handler(commands=["start", "help", "menu"], chat_types=["private"])
 def start_message(message: types.Message):
-    bot.send_message(message.chat.id, "Привет! Спасибо, что выбрали этого бота!\n\n<b>Данный бот удаляет системные сообщения телеграмма из канала. Чтобы бот начал рабоать - просто добавьте его к себе в канал/чат и выдайте ему права администратора!</b>\n\n<i>made by Juice</i>")
+    bot.send_message(message.chat.id, 'Привет! Спасибо, что выбрали этого бота!\n\n<b>Данный бот удаляет системные сообщения телеграмма из канала.\n\nЧтобы бот начал работать - просто добавьте его к себе в канал/чат и выдайте ему права администратора!</b>\n\n<i>made by <a href="https://t.me/juiceworks">Juice</a></i>', disable_web_page_preview=True)
 
 
 while True:
